@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html manifest=manifest.appcache>
+
+	<head>
+	
+		<meta charset="utf-8">
+		<title>TodoApp</title>
+		<link rel=stylesheet href="css/main.css" type="text/css" />
+	
+	</head>
+
+	<body>
+	
+		<!-- calling libraries -->
+		<script src="js/lib/mediator.js"></script>
+		<script src="js/lib/indexeddb.js"></script>
+		<script src="js/lib/storage.js"></script>
+		
+		<script src="js/ioc.js"></script>
+
+		<!-- calling data models -->
+		<script src="js/model/todo.js"></script>
+		<script src="js/model/note.js"></script>
+		<script src="js/model/list.js"></script>
+		<script src="js/model/workspace.js"></script>
+		
+		<!-- calling data collections -->
+		<script src="js/collection/lists.js"></script>
+		<script src="js/collection/workspaces.js"></script>
+		<script src="js/collection/todos.js"></script>
+		<script src="js/collection/notes.js"></script>
+		
+		<!-- calling controllers -->
+		<script src="js/controller/workspaces.js"></script>
+		<script src="js/controller/wrapper.js"></script>
+		
+		<!-- calling views -->
+		<script src="js/view/workspaces.js"></script>
+		<script src="js/view/popup.js"></script>
+		<script src="js/view/wrapper.js"></script>
+		<script src="js/view/browser.js"></script>
+		
+		<!-- calling app main -->
+		<script src="js/index.js"></script>
+		
+		<script type="text/html" id=tpl_menu>
+			<header id=menu>
+				<div id=toggle>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div id=workspaces>
+					<nav>
+						<ul>
+						</ul>
+					</nav>
+					<div id=add_workspace>
+						<span id=aw_icon></span>
+						<span id=aw_text>New Workspace</span>
+					</div>
+				</div>
+			</header>
+		</script>
+		
+		<script type="text/html" id=tpl_workspace_new_form>
+			<div id=new_workspace class=popup>
+				<div class=background></div>
+				<div class=content>
+					<div class=header>
+						New Workspace
+						<span class=close>x</span>
+					</div>
+					<div class=content>
+						<input class=input type=text name=new_workspace_name placeholder="Workspace name" required /><br/>
+						<input class=button type=submit name=add_workspace value="Add" />
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/html" id=tpl_wrapper>
+			<div id=wrapper data-workspace data-type=tasks>
+				<div id=w_top>
+					<div id=type_selectors class=button_list>
+						<button class="button type_selector" data-type=tasks>
+							Tasks
+						</button>
+						<button class="button type_selector" data-type=notes>
+							Notes
+						</button>
+					</div>
+					<h1></h1>
+					<button id=workspace_delete class=button>
+						Delete
+					</button>
+				</div>
+				<div id=w_content>
+					<div id=wc_list>
+						<ul></ul>
+						<div id=wcl_add>
+							<span id=wcla_icon></span>
+							<span id=wcla_text>Add</span>
+						</div>
+					</div>
+					<div id=wc_content>
+						<div id=wcc_todos>
+							<input class=input type=text placeholder="Add a task..." required />
+							<ul></ul>
+						</div>
+						<div id=wcc_note data-guid>
+							<textarea class=txta placeholder="Add a note..." required></textarea>
+							<br/>
+							<input class=button type=submit name=save_note value="Save" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/html" id=tpl_list>
+			<li class=list data-guid={{guid}}>
+				<span class=name>{{name}}</span>
+				<span class=delete></span>
+			</li>
+		</script>
+		
+		<script type="text/html" id=tpl_note>
+			<li class=note data-guid={{guid}}>
+				<span class=text>{{text}}</span>
+				<span class=delete></span>
+			</li>
+		</script>
+		
+		<script type="text/html" id=tpl_todo>
+			<li class=todo data-guid={{guid}} data-sticky={{sticky}} data-done={{done}}>
+				<div class=actions>
+					<span class=done>
+						<input type=checkbox name=done data-guid={{guid}} />
+					</span>
+					<span class="sticky action" data-guid={{guid}}></span>
+					<span class=task>{{task}}</span>
+					<span class="note action" data-guid={{guid}}></span>
+					<span class="delete action" data-guid={{guid}}></span>
+				</div>
+				<ul class=revisions>
+					{{revisions}}
+					<li>
+						<input class=input type=text name=add_revision placeholder="Add a revision..." data-guid={{guid}} />
+					</li>
+				</ul>
+			</li>
+		</script>
+		
+		<script type="text/html" id=tpl_workspace_delete_form>
+			<div id=delete_workspace class=popup data-workspace>
+				<div class=background></div>
+				<div class=content>
+					<div class=header>
+						Delete Workspace
+						<span class=close>x</span>
+					</div>
+					<div class=content>
+						<p>You're about to delete this workspace with all its content, are you sure?</p>
+						<input class=button type=submit name=cancel_delete_workspace value="No" />
+						<input class=button type=submit name=delete_workspace value="Yes" />
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/html" id=tpl_list_new_form>
+			<div id=new_list class=popup>
+				<div class=background></div>
+				<div class=content>
+					<div class=header>
+						New List
+						<span class=close>x</span>
+					</div>
+					<div class=content>
+						<input class=input type=text name=new_list_name placeholder="List name" required /><br/>
+						<input class=button type=submit name=add_list value="Add" />
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/html" id=tpl_list_delete_form>
+			<div id=delete_list class=popup data-list>
+				<div class=background></div>
+				<div class=content>
+					<div class=header>
+						Delete List
+						<span class=close>x</span>
+					</div>
+					<div class=content>
+						<p>You're about to delete this list with all its content, are you sure?</p>
+						<input class=button type=submit name=cancel_delete_list value="No" />
+						<input class=button type=submit name=delete_list value="Yes" />
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/html" id=tpl_todo_note_form>
+			<div id=todo_note class=popup data-guid>
+				<div class=background></div>
+				<div class=content>
+					<div class=header>
+						Task Note
+						<span class=close>x</span>
+					</div>
+					<div class=content>
+						<textarea class=txta></textarea>
+						<br/>
+						<input class=button type=submit name=save_note value="Save" />
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/html" id=tpl_browser_incompatible>
+			<div id=browser_incompatible>
+				<h1>Too bad! Your browser don't support required features!</h1>
+				<p>
+					This application is based on HTML 5, CSS 3 and Javascript technologies, but apparently your browser don't recognize those needed! I suggest you to download the latest version of <a href="">Google Chrome</a>.<br/>
+					Note that you can find on the website <a href="http://caniuse.com">caniuse.com</a> which browser support required features.	Requested features list:
+				</p>
+				<ul>
+					<li>IndexedDB</li>
+					<li>localStorage</li>
+					<li>querySelector</li>
+					<li>dataset</li>
+				</ul>
+				<div id="footer">
+					developped by <a href="http://baptiste-langlade.com">Baptiste Langlade</a>.
+				</div>
+				<img id=html5 src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-performance-semantics-storage.png" alt="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, Semantics, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Performance &amp; Integration, Semantics, and Offline &amp; Storage">
+			</div>
+		</script>
+	
+	</body>
+
+</html>
