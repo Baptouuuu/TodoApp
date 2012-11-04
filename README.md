@@ -17,6 +17,8 @@ HTML5 APIs:
 
 It has been tested with Chrome 21+ and Firefox 15+
 
+## Known issues
+In Chrome 22 and under, the first time the app is launched only the menu is displayed. A refresh of the page is needed to work properly.
 
 ## Sources
 Icons: http://medialoot.com/item/listicons-arrows-bullets-webfont/
