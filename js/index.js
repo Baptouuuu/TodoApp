@@ -14,8 +14,6 @@ App.Index = {
 		
 			console.log('App initializing...');
 			
-			window.innerTextProperty = (document.all !== undefined) ? 'innerText' : 'textContent';
-			
 			IoC.Mediator.publish('app.init');
 			
 			//prevent another script to re-init the app
@@ -42,7 +40,7 @@ App.Index = {
 		//Browser need to support datasets
 		var li = document.createElement('li');
 		
-		if (li.dataset === undefined) {
+		if (li.dataset === undefined || li.classList === undefined) {
 		
 			IoC.Mediator.pause('app.init');
 		
