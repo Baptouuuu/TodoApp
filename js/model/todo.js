@@ -13,10 +13,10 @@ App.Model.Todo = function (options){
 	this.guid = parseInt(options.guid) || 0;
 	this.task = options.task || '';
 	this.revision = options.revision || [];
-	this.dueTimeStamp = options.dueTimeStamp || false;
-	this.sticky = options.sticky || false;
+	this.dueTimeStamp = options.dueTimeStamp || 0;
+	this.sticky = options.sticky || 0;
 	this.note = options.note || '';
-	this.done = options.done || false;
+	this.done = options.done || 0;
 	this.list = parseInt(options.list) || 0;
 
 };
