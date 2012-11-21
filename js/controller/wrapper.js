@@ -75,7 +75,7 @@ App.Controller.Wrapper = {
 				var el = event.target;
 				
 				//notify the app we change the type of content to display
-				if(el.classList.contains('type_selector')){
+				if(el.classList.contains('type_selector') && el.dataset.type !== self.block.dataset.type){
 				
 					IoC.Mediator.publish('wrapper.change.type', [el.dataset.type, self.block.dataset.workspace]);
 				
