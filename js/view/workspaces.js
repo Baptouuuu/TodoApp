@@ -68,7 +68,7 @@ App.View.Workspaces = {
 			
 			li.dataset.guid = workspaces[i].guid;
 			li.dataset.name = workspaces[i].name;
-			li[innerTextProperty] = workspaces[i].name;
+			li.textContent = workspaces[i].name;
 			
 			ul.appendChild(li);
 		
@@ -151,7 +151,7 @@ App.View.Workspaces = {
 		
 		li.dataset.guid = workspace.guid;
 		li.dataset.name = workspace.name;
-		li[innerTextProperty] = workspace.name;
+		li.textContent = workspace.name;
 		
 		this.block.querySelector('ul').appendChild(li);
 		
