@@ -162,7 +162,7 @@ App.Collection.Todos = {
 			
 				var todo = this.items[i];
 				
-				(todo.done === true) ? todo.done = false : todo.done = true;
+				(!!todo.done === true) ? todo.done = 0 : todo.done = 1;
 				
 				todo.update();
 				
@@ -186,7 +186,7 @@ App.Collection.Todos = {
 			
 				var todo = this.items[i];
 				
-				(todo.sticky === true) ? todo.sticky = false : todo.sticky = true;
+				(!!todo.sticky === true) ? todo.sticky = 0 : todo.sticky = 1;
 				
 				todo.update();
 				
