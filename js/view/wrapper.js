@@ -107,7 +107,7 @@ App.View.Wrapper = {
 			var w = workspaces[0];
 			
 			this.wrapper.dataset.workspace = w.guid;
-			this.wrapperTitle[innerTextProperty] = w.name;
+			this.wrapperTitle.textContent = w.name;
 		
 		}
 		
@@ -141,7 +141,7 @@ App.View.Wrapper = {
 			if (self.wrapper.dataset.workspace != guid) {
 			
 				self.wrapper.dataset.workspace = guid;
-				self.wrapperTitle[innerTextProperty] = name;
+				self.wrapperTitle.textContent = name;
 				
 				self.changeType('tasks');
 				
@@ -392,10 +392,10 @@ App.View.Wrapper = {
 				}
 				
 				html += self.templates.todo.innerHTML.replace(/{{guid}}/g, todos[i].guid)
-													 .replace(/{{sticky}}/g, todos[i].sticky)
+													 .replace(/{{sticky}}/g, !!todos[i].sticky)
 													 .replace(/{{task}}/g, todos[i].task)
 													 .replace(/{{revisions}}/g, revisions)
-													 .replace(/{{done}}/g, todos[i].done);
+													 .replace(/{{done}}/g, !!todos[i].done);
 			
 			}
 			
@@ -425,10 +425,10 @@ App.View.Wrapper = {
 			self.todos.add.value = '';
 			
 			html = self.templates.todo.innerHTML.replace(/{{guid}}/g, todo.guid)
-												.replace(/{{sticky}}/g, todo.sticky)
+												.replace(/{{sticky}}/g, !!todo.sticky)
 												.replace(/{{task}}/g, todo.task)
 												.replace(/{{revisions}}/g, '')
-												.replace(/{{done}}/g, todo.done);
+												.replace(/{{done}}/g, !!todo.done);
 			
 			self.todos.list.innerHTML = html + self.todos.list.innerHTML;
 		
@@ -533,12 +533,21 @@ App.View.Wrapper = {
 			}
 			
 			var html = '',
+				index = -1,
 				firstEl = null;
 			
 			for (var i = 0, length = notes.length; i < length; i++) {
 			
+				index = notes[i].text.indexOf('\n');
+				
+				if (index === -1 || index > 42) {
+				
+					index = 42;
+				
+				}
+				
 				html += self.templates.note.innerHTML.replace(/{{guid}}/g, notes[i].guid)
-													 .replace(/{{text}}/g, notes[i].text.substr(0, 42));
+													 .replace(/{{text}}/g, notes[i].text.substr(0, index));
 			
 			}
 			
@@ -563,13 +572,20 @@ App.View.Wrapper = {
 		
 			var self = App.View.Wrapper,
 				html = '',
+				index = note.text.indexOf('\n'),
 				selected = null,
 				last = null;
 			
 			self.note.wrapper.dataset.guid = note.guid;
 			
+			if (index === -1 || index > 42) {
+			
+				index = 42;
+			
+			}
+			
 			html = self.templates.note.innerHTML.replace(/{{guid}}/g, note.guid)
-												.replace(/{{text}}/g, note.text.substr(0, 42));
+												.replace(/{{text}}/g, note.text.substr(0, index));
 			
 			self.sidebar.innerHTML += html;
 			
@@ -651,13 +667,22 @@ App.View.Wrapper = {
 		
 		update: function (note) {
 		
-			var li = App.View.Wrapper.sidebar.querySelector('li[data-guid="' + note.guid + '"]');
+			var li = App.View.Wrapper.sidebar.querySelector('li[data-guid="' + note.guid + '"]'),
+				index =  note.text.indexOf('\n');
 			
 			if (li !== null) {
 			
-				li.querySelector('.text')[innerTextProperty] = note.text.substr(0, 42);
+				if (index === -1 || index > 42) {
+				
+					index = 42;
+				
+				}
+				
+				li.querySelector('.text').textContent = note.text.substr(0, index);
 			
 			}
+			
+			this.note.txta.focus();
 		
 		}
 	
